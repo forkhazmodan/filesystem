@@ -5,7 +5,7 @@ import com.filesystem.services.FileSystemService;
 
 @Command(
         regex = "^\\/download (?<from>(.+(\\/|\\\\)?)(.*[^\\s]))\\s+(?<to>(.+(\\/|\\\\)?.*[^\\s]))$",
-        description = "/download <path/from/file.ext> "
+        description = "/download <path/from/file.ext> <path/to/file.ext>"
 )
 public class DownloadCommand implements CommandInterface {
 
@@ -20,6 +20,3 @@ public class DownloadCommand implements CommandInterface {
         FileSystemService.download(from, to);
     }
 }
-
-// (?<from>(?<path>.+(\/|\\))(?<filename>.*[^\s]))
-// (?<to>(.+(\/|\\).*[^\s]))
