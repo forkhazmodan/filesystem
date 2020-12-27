@@ -26,17 +26,16 @@ public class FileSystemService {
             for (String part : path.getParts()) {
                 if (!"".equals(part)) {
 
-
                     Folder folder = null;
 
-                    try{
+                    try {
                         folder = FolderRepository.getFolder(part, previousFolder);
-                    } catch (NoResultException e) {}
+                    } catch (NoResultException e) {
+                    }
 
                     if (folder == null) {
                         folder = new Folder(part);
                         if (previousFolder != null) {
-//                            folder.setParent(previousFolder);
                             previousFolder.addChildren(folder);
                         }
                     }
@@ -134,16 +133,16 @@ public class FileSystemService {
     }
 
     public static void folderList(java.io.File fileToList) {
-        try{
+        try {
             Folder rootFolder = FolderRepository.getFolder(fileToList.getAbsolutePath());
 
             System.out.println(fileToList.getAbsolutePath() + ">");
 
-            for (Folder folder :rootFolder.getChildren()) {
+            for (Folder folder : rootFolder.getChildren()) {
                 System.out.println(folder.getName() + "\\");
             }
 
-            for (File file :rootFolder.getFiles()) {
+            for (File file : rootFolder.getFiles()) {
                 System.out.println(file.getName());
             }
         } catch (NoResultException e) {
@@ -158,16 +157,16 @@ public class FileSystemService {
         String fromParentPath = fromFile.getParent();
         String fromFileName = fromFile.getName();
 
-        try{
+        try {
 
             Folder childFolder = FolderRepository.findFolder(fromAbsolutePath);
             Folder parentFolder = FolderRepository.findFolder(fromParentPath);
             File parentFolderFile = FileRepository.findFile(parentFolder, fromFileName);
             java.io.File targetFolder = new java.io.File(to);
 
-            if(childFolder != null) {
+            if (childFolder != null) {
                 downloadFolder(childFolder, targetFolder);
-            } else if(parentFolderFile != null) {
+            } else if (parentFolderFile != null) {
                 downloadFile(parentFolderFile, targetFolder);
             } else {
                 throw new NoResultException("Not found");
@@ -175,23 +174,23 @@ public class FileSystemService {
 
         } catch (NoResultException e) {
             System.out.println(from + " Not found");
-        }  catch (IOException e) {
+        } catch (IOException e) {
             System.out.println(e);
         }
     }
 
     public static void downloadFile(File fileToDownload, java.io.File targetFile) throws IOException {
-        if(fileToDownload == null) {
+        if (fileToDownload == null) {
             System.out.println("No such file");
             return;
         }
 
         java.io.File parentDir = new java.io.File(targetFile.getParent());
-        if(!parentDir.exists()) {
+        if (!parentDir.exists()) {
             parentDir.mkdirs();
         }
 
-        if(targetFile.exists()) {
+        if (targetFile.exists()) {
             targetFile = createCopyFile(targetFile);
         } else {
             targetFile.createNewFile();
@@ -207,45 +206,25 @@ public class FileSystemService {
 
     public static void downloadFolder(Folder folderToDownload, java.io.File targetFolder) throws IOException {
 
-        if(folderToDownload == null) {
+        if (folderToDownload == null) {
             System.out.println(folderToDownload.getName());
             return;
         }
 
         targetFolder.mkdirs();
 
-        for (File fileItem: folderToDownload.getFiles()) {
+        for (File fileItem : folderToDownload.getFiles()) {
             String pathName = targetFolder.getAbsolutePath() + java.io.File.separator + fileItem.getName();
             FileSystemService.downloadFile(fileItem, new java.io.File(pathName));
-
         }
 
-        for (Folder folderItem: folderToDownload.getChildren()) {
+        for (Folder folderItem : folderToDownload.getChildren()) {
             String pathName = targetFolder.getAbsolutePath() + java.io.File.separator + folderItem.getName();
             downloadFolder(folderItem, new java.io.File(pathName));
         }
-
-
-
-//        List<String> parts = new ArrayList<>();
-//        parts.add(0, folderToDownload.getName());
-//        Folder folder = folderToDownload.getParent();
-
-//        while(folder != null) {
-//            parts.add(0, folder.getName());
-//            folder = folder.getParent();
-//        }
-
-//        String listString = String.join(java.io.File.separator, parts);
-//
-//        new java.io.File(listString).mkdirs();
-//
-//        System.out.println(listString);
-//
-//        System.out.println(folderToDownload.getName());
     }
 
-    public static java.io.File createCopyFile(java.io.File targetFile) {
+    private static java.io.File createCopyFile(java.io.File targetFile) {
 
         String name = targetFile.getName();
         String fName = name.substring(0, name.lastIndexOf("."));
@@ -253,7 +232,7 @@ public class FileSystemService {
 
         targetFile = new java.io.File(targetFile.getParent() + "/" + fName + " - copy" + fExt);
 
-        if(targetFile.exists()) {
+        if (targetFile.exists()) {
             targetFile = createCopyFile(targetFile);
         }
 

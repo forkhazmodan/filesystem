@@ -38,12 +38,9 @@ public class CommandFacade {
                 }
             }
 
-
-
-            if(newCommand == null) {
+            if (newCommand == null) {
                 throw new CommandErrorException("Command not found");
             }
-
 
             /** Check if any named params matches to params in command class*/
             for (Field field : newCommand.getClass().getDeclaredFields()) {
